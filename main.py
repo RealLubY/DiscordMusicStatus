@@ -1,5 +1,5 @@
 # This is a little script that changes your discord custom status to the song name you are currently listening.
-# This only works with youtube music, scince thats the platform i prefer, and the tab must be the active one.
+# This is only tested with youtube music, scince thats the platform i prefer, and the tab must be the active one.
 # You can just open the tab in a new window for example.
 
 import configparser
@@ -26,12 +26,14 @@ def deEmojify(inputString): # remove any emojis in the song title
 def winEnumHandler(hwnd, ctx): # get current song, for this to work the music tab must be the active one
     global song
     cfg.read("cfg.ini")
+
     browser = cfg.get("MAIN", "browser")
+    service = cfg.get("MAIN", "service")
 
     if win32gui.IsWindowVisible(hwnd):
         x = win32gui.GetWindowText(hwnd)
-        if browser and "YouTube Music" in str(x):
-            song = deEmojify(str(x).replace(f" - YouTube Music - {browser}", ""))
+        if browser and service in str(x):
+            song = deEmojify(str(x).replace(f" - {service} - {browser}", ""))
 
 
 def update_status(title : None): # sending a request to chnage your custim discord status
@@ -58,10 +60,13 @@ def update_status(title : None): # sending a request to chnage your custim disco
 def main(): # some logic to combine the functions, tbh its messy
     global song, old, status
     while True:
-        time.sleep(5)
+        cfg.read("cfg.ini")
+
         song = None
         win32gui.EnumWindows(winEnumHandler, None) # get current song
-        if not song or song == "YouTube Music - Google Chrome":
+        browser = cfg.get("MAIN", "browser")
+        service = cfg.get("MAIN", "service")
+        if not song or song == f"{service} - {browser}":
             old = None
             if status:
                 update_status(None)
@@ -74,6 +79,7 @@ def main(): # some logic to combine the functions, tbh its messy
 
         if update_status(song):
             status = True
+        time.sleep(5)
 
 
 main()
