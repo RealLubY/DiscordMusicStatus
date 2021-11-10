@@ -36,7 +36,7 @@ def winEnumHandler(hwnd, ctx): # get current song, for this to work the music ta
             song = deEmojify(str(x).replace(f" - {service} - {browser}", ""))
 
 
-def update_status(title : None): # sending a request to chnage your custim discord status
+def update_status(title : None): # sending a request to chnage your custom discord status
     cfg.read("cfg.ini")
 
     headers = {
@@ -53,7 +53,7 @@ def update_status(title : None): # sending a request to chnage your custim disco
         data = '{"custom_status":{"text":"%s"}}' % cfg.get("MAIN", "default_status")
     else:
         data = '{"custom_status":{"text":"%s %s"}}' % (cfg.get("MAIN", "text"), title)
-    #data = '{"custom_status":{"text":"life is just a game...","emoji_id":"776686859140857887","emoji_name":"fir_happy"}}' #if you want to have an emoji (custom emoji)
+    #data = '{"custom_status":{"text":"","emoji_id":"","emoji_name":""}}' #if you want to have an emoji (custom emoji)
     return requests.patch('https://discord.com/api/v9/users/@me/settings', headers=headers, data=data)
 
 
